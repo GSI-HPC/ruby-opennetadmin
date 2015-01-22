@@ -21,15 +21,13 @@ class ONA
 
     # options is key1=value1&key2=value2&... '&' must be URL encoded
     # we do some tricks with inject
-    option_string = options.inject([]) { |a,e| a << "#{e[0]}=#{e[1]}" }.join('%26')
+    option_string = options.inject([]) do |a,e|
+      a << "#{e[0]}=#{URI.encode(e[1].to_s)}"
+    end.join('%26')
 
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
 
-    puts "#{@url}?module=#{mod}&options=#{option_string}"
-
     uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string}")
-    #args = {include_entities: 0, include_rts: 0, screen_name: 'johndoe', count: 2, trim_user: 1} ???
-    #uri.query = URI.encode_www_form(args)
 
     result = ""
 
@@ -46,7 +44,7 @@ class ONA
     rc = result.shift.to_i
     if rc != 0
       # does this really mean error condition? raise error?
-      STDERR.puts "ONA error code #{rc} for #{uri}"
+      STDERR.puts "ONA error code #{rc} for #{uri}:\n#{result.join("\n")}"
     end
 
     # TODO: catch "Authorization Required"
@@ -57,6 +55,11 @@ class ONA
       return result.join("\n")
     end
 
+  end
+
+  # convert numeric ip to dotted quad string notation:
+  def self.ip_mangle (i)
+    return [i].pack('N').unpack('C4').join('.')
   end
 
 end
