@@ -37,14 +37,15 @@ class ONA
       request = Net::HTTP::Get.new(uri.request_uri)
       request.basic_auth(@username, @password) if @username and @password
       response = http.request(request)
+      response.value # raise an error unless Net::HTTPSuccess
       result = response.body.split(/\n/)
     end
 
-    # first line is a return code (wurgs)
+    # first line is a pseudo return code (wurgs)
     rc = result.shift.to_i
     if rc != 0
       # does this really mean error condition? raise error?
-      STDERR.puts "ONA error code #{rc} for #{uri}:\n#{result.join("\n")}"
+      raise "ONA error code #{rc} for #{uri}:\n#{result.join("\n")}"
     end
 
     # TODO: catch "Authorization Required"
