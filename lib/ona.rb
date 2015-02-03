@@ -22,8 +22,15 @@ class ONA
 
     # options is key1=value1&key2=value2&... '&' must be URL encoded
     # we do some tricks with inject
-    option_string = options.inject([]) do |a,e|
-      a << "#{e[0]}=#{URI.encode(e[1].to_s)}"
+    option_string = options.inject([]) do |a,(k,v)|
+      if v
+        # FIXME: If v is a filename, dcm.pl reads and passes its content
+        #        I doubt this is really smart behaviour
+        a << "#{k}=#{URI.encode(v.to_s)}"
+      else
+        # if options have no value we fallback to 'Y':
+        a << "#{k}=Y"
+      end
     end.join('%26')
 
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
