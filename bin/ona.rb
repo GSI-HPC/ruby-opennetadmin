@@ -32,6 +32,7 @@ optparse = OptionParser.new do |opts|
 
   opts.on('-L', '--list', 'list available modules') do
     options[:module] = 'get_module_list'
+    options[:params] = { :type => 'string' }
   end
 
   opts.on('-r', '--run MODULE', 'run specified module') do |v|
@@ -54,6 +55,7 @@ puts options.inspect if options[:debug] > 0
 if options[:username] and not options[:password]
   STDERR.print "Password for #{options[:username]}: "
   options[:password] = STDIN.noecho(&:gets).chomp
+  STDERR.puts
 end
 
 ona = ONA.new(options[:url], options[:username], options[:password])
