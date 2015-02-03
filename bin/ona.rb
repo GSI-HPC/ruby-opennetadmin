@@ -2,6 +2,9 @@
 #
 # This is a Ruby replacement for dcm.pl
 #
+# TODO: Read config items from a config file
+#
+
 
 require 'io/console'
 require 'ona'
@@ -10,32 +13,37 @@ require 'optparse'
 
 #### Commandline processing
 
-options = { :debug => 0, :params => { } }
+options = { :debug => 0, :params => { }, :url => 'http://localhost/ona/dcm.php'}
 
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: ona_batch_load [options] csv_file"
-  
-  opts.on("-l", "--login USER", "Username for DB connection") do |v|
+  opts.banner = "Usage: ona.rb <action> <options>"
+
+  opts.on("-l", "--login USER", "Username for ONA connection") do |v|
     options[:username] = v
   end
-  
-  opts.on("-p", "--password PASS", "Password for DB connection") do |v|
+
+  opts.on("-p", "--password PASS", "Password for ONA connection") do |v|
     options[:password] = v
   end
-  
+
+  opts.on("-u", "--url URL", "URL to dcm.php") do |v|
+    options[:url] = v
+  end
+
   opts.on('-L', '--list', 'list available modules') do
     options[:module] = 'get_module_list'
   end
-  
+
   opts.on('-r', '--run MODULE', 'run specified module') do |v|
     options[:module] = v
   end
-  
+
   opts.on("-t", "--test", "Debug dry-run mode") do |v|
     options[:debug] += 1
   end
-  
+
 end.parse!
+
 
 # turn key1=value1 key2=value2 ... cmdline args into a Ruby hash:
 options[:params] = ARGV.inject({}){ |h,e| (k,v) = e.split('='); h[k] = v;h  }
@@ -48,6 +56,6 @@ if options[:username] and not options[:password]
   options[:password] = STDIN.noecho(&:gets).chomp
 end
 
-ona = ONA.new(options[:username], options[:password])
+ona = ONA.new(options[:url], options[:username], options[:password])
 
 puts ona.query(options[:module], options[:params])
