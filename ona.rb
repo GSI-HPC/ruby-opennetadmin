@@ -3,7 +3,7 @@
 # This is a Ruby replacement for dcm.pl
 #
 
-require 'highline/import'
+require 'io/console'
 require 'ona'
 require 'optparse'
 
@@ -44,9 +44,8 @@ puts options.inspect if options[:debug] > 0
 
 # Time to ask for a password unless given on the cmdline:
 if options[:username] and not options[:password]
-  options[:password] = ask("Password for #{options[:username]}:") do |q|
-    q.echo = "*"
-  end
+  STDERR.print "Password for #{options[:username]}: "
+  options[:password] = STDIN.noecho(&:gets).chomp
 end
 
 ona = ONA.new(options[:username], options[:password])
