@@ -26,7 +26,8 @@ class ONA
       if v
         # FIXME: If v is a filename, dcm.pl reads and passes its content
         #        I doubt this is really smart behaviour
-        a << "#{k}=#{URI.encode(v.to_s)}"
+        v2 = v.to_s.gsub('=','\=') # escape equal signs eg. in SQL queries
+        a << "#{k}=#{URI.encode(v2, /[^[:alnum:]]/)}"
       else
         # if options have no value we fallback to 'Y':
         a << "#{k}=Y"
@@ -48,7 +49,7 @@ class ONA
         response = http.request(request)
         response.value # raise an error unless Net::HTTPSuccess
         result = response.body.split(/\n/)
-      end
+     end
     rescue Net::HTTPServerException => e
       raise "Connection failed: " + e.to_s
     end
