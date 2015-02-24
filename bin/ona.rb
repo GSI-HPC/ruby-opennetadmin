@@ -64,6 +64,12 @@ if options[:username] and not options[:password]
   STDERR.puts
 end
 
+# fallback to --list of no module was given
+unless options[:module]
+    options[:module] = 'get_module_list'
+    options[:params][:type] = 'string'
+end
+
 ona = ONA.new(options[:url], options[:username], options[:password])
 
 puts ona.query(options[:module], options[:params])
