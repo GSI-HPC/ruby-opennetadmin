@@ -2,6 +2,7 @@
 # class for ONA queries, replacement for dcm.pl
 #
 
+require 'cgi'
 require 'json'
 require "net/https"
 
@@ -27,7 +28,7 @@ class ONA
         # FIXME: If v is a filename, dcm.pl reads and passes its content
         #        I doubt this is really smart behaviour
         v2 = v.to_s.gsub('=','\=') # escape equal signs eg. in SQL queries
-        a << "#{k}=#{URI.encode(v2, /[^[:alnum:]]/)}"
+        a << "#{k}=#{CGI.escape(v2)}"
       else
         # if options have no value we fallback to 'Y':
         a << "#{k}=Y"
