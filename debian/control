@@ -1,0 +1,19 @@
+Source: ruby-opennetadmin
+Section: ruby
+Priority: optional
+Maintainer: Debian Ruby Extras Maintainers <pkg-ruby-extras-maintainers@lists.alioth.debian.org>
+Uploaders: Christopher Huhn, GSI <C.Huhn@gsi.de>
+Build-Depends: debhelper (>= 7.0.50~), gem2deb
+Standards-Version: 3.9.5
+Vcs-Git: git://anonscm.debian.org/pkg-ruby-extras/ruby-opennetadmin.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-ruby-extras/ruby-opennetadmin.git;a=summary
+Homepage: http://gitorious.gsi.de/ona/ona_gem
+Testsuite: autopkgtest
+XS-Ruby-Versions: all
+
+Package: ruby-opennetadmin
+Architecture: all
+XB-Ruby-Versions: ${ruby:Versions}
+Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter
+Description: Client interface to OpenNetAdmin as a replacement for dcm.pl
+ <insert long description, indented with spaces>
