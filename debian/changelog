@@ -1,23 +1,5 @@
-ruby-opennetadmin (0.3.2-1) stretch; urgency=medium
-
-  * Package latest changes to the module
-
- -- Christopher Huhn <C.Huhn@gsi.de>  Thu, 01 Feb 2018 10:56:20 +0100
-
-ruby-opennetadmin (0.3.0-1) stretch; urgency=medium
-
-  * Some more fixes and enhancements
-
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Mon, 27 Nov 2017 13:28:25 +0100
-
-ruby-opennetadmin (0.2.0-1) stretch; urgency=medium
-
-  * Package new version
-
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Thu, 23 Nov 2017 15:56:03 +0100
-
-ruby-opennetadmin (0.0.4-1) unstable; urgency=low
+ruby-opennetadmin (0.0.4-1) UNRELEASED; urgency=medium
 
   * Initial release (Closes: #nnnn)
 
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Mon, 09 Mar 2015 15:52:32 +0100
+ -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Tue, 02 Feb 2016 14:08:22 +0100
