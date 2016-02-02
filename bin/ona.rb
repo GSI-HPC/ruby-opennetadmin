@@ -72,4 +72,8 @@ end
 
 ona = ONA.new(options[:url], options[:username], options[:password])
 
-puts ona.query(options[:module], options[:params])
+begin
+  puts ona.query(options[:module], options[:params])
+rescue Exception => e
+  STDERR.puts "Command failed: #{e}"
+end
