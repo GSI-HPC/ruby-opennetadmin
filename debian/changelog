@@ -1,5 +1,5 @@
-ruby-opennetadmin (0.0.4-1) UNRELEASED; urgency=medium
+ruby-opennetadmin (0.0.4-1) UNRELEASED; urgency=low
 
   * Initial release (Closes: #nnnn)
 
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Tue, 02 Feb 2016 14:08:22 +0100
+ -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Mon, 09 Mar 2015 15:52:32 +0100
