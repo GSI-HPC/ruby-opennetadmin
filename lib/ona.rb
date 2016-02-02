@@ -47,6 +47,7 @@ class ONA
         request = Net::HTTP::Get.new(uri.request_uri)
         request.basic_auth(@username, @password) if @username and @password
         response = http.request(request)
+        # TODO: follow redirects (Net::HTTPRedirection)
         response.value # raise an error unless Net::HTTPSuccess
         result = response.body.split(/\n/)
      end
@@ -57,7 +58,8 @@ class ONA
     # first line is a pseudo return code (wurgs)
     rc = result.shift.to_i
     if rc != 0
-      # does this really mean error condition? raise error?
+      # TODO: this isn't really an error condition all the time
+      #  eg. for *_display methods it seems to be the dataset count
       raise "ONA error code #{rc} for #{uri}:\n#{result.join("\n")}"
     end
 
