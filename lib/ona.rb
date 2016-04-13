@@ -40,17 +40,19 @@ class ONA
     result = ""
 
     begin
-      Net::HTTP.start(uri.host, uri.port,
+      Net::HTTP.start(
+        uri.host, uri.port,
         :use_ssl => (uri.scheme == 'https'),
         # FIXME: Don't turn off SSL verification unconditionally
         :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+
         request = Net::HTTP::Get.new(uri.request_uri)
         request.basic_auth(@username, @password) if @username and @password
         response = http.request(request)
         # TODO: follow redirects (Net::HTTPRedirection)
         response.value # raise an error unless Net::HTTPSuccess
         result = response.body.split(/\n/)
-     end
+      end
     rescue Net::HTTPServerException => e
       raise "Connection failed: " + e.to_s
     end
@@ -66,7 +68,7 @@ class ONA
     # TODO: better catch "Authorization Required"
     begin
       return JSON.parse(result.join("\n"))
-    rescue JSON::ParserError => e
+    rescue JSON::ParserError
       # OK, so we return plain text:
       return result.join("\n")
     end

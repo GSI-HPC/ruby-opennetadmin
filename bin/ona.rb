@@ -15,7 +15,7 @@ require 'optparse'
 
 options = { :debug => 0, :params => { }, :url => 'http://localhost/ona/dcm.php'}
 
-optparse = OptionParser.new do |opts|
+OptionParser.new do |opts|
   opts.banner = "Usage: ona.rb <action> <options>"
 
   opts.on("-l", "--login USER", "Username for ONA connection") do |v|
@@ -39,7 +39,7 @@ optparse = OptionParser.new do |opts|
     options[:module] = v
   end
 
-  opts.on("-t", "--test", "Debug dry-run mode") do |v|
+  opts.on("-t", "--test", "Debug dry-run mode") do
     options[:debug] += 1
   end
 
@@ -74,6 +74,6 @@ ona = ONA.new(options[:url], options[:username], options[:password])
 
 begin
   puts ona.query(options[:module], options[:params])
-rescue Exception => e
+rescue StandardError => e
   STDERR.puts "Command failed: #{e}"
 end
