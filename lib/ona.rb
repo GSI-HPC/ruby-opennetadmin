@@ -3,59 +3,67 @@
 #
 
 require 'json'
-require "net/https"
+require 'net/https'
 
 class ONA
-
-  def initialize(url='http://localhost/ona/dcm.php', username=nil, password=nil)
+  def initialize(url = 'http://localhost/ona/dcm.php',
+                 username = nil, password = nil, options = {})
     @url = url
     @username = username
     @password = password
+    @options = { verify_ssl: true }.merge(options)
   end
 
-  ### this function should be in some central lib too ...
-  def query (mod, options={})
-
-    # JSON output is a GSI specific addition atm.
-    #  therefore we don't default to it here
-    #options[:format] ||= 'json'
-
+  # construct the options part of the query string from the given
+  #  options hash:
+  def option_string(options = {})
     # options is key1=value1&key2=value2&... '&' must be URL encoded
     # we do some tricks with inject
-    option_string = options.inject([]) do |a,(k,v)|
+    options.inject([]) do |a, (k, v)|
       if v
         # FIXME: If v is a filename, dcm.pl reads and passes its content
         #        I doubt this is really smart behaviour
-        v2 = v.to_s.gsub('=','\=') # escape equal signs eg. in SQL queries
+        v2 = v.to_s.gsub('=', '\=') # escape equal signs eg. in SQL queries
         a << "#{k}=#{URI.encode(v2, /[^[:alnum:]]/)}"
       else
         # if options have no value we fallback to 'Y':
         a << "#{k}=Y"
       end
     end.join('%26')
+  end
 
-    # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
-    uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string}")
-
-    result = ""
-
+  # send request to ONA server
+  def request(uri)
+    result = ''
     begin
       Net::HTTP.start(
         uri.host, uri.port,
-        :use_ssl => (uri.scheme == 'https'),
+        use_ssl: (uri.scheme == 'https'),
         # FIXME: Don't turn off SSL verification unconditionally
-        :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+        verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
 
         request = Net::HTTP::Get.new(uri.request_uri)
-        request.basic_auth(@username, @password) if @username and @password
+        request.basic_auth(@username, @password) if @username && @password
         response = http.request(request)
         # TODO: follow redirects (Net::HTTPRedirection)
         response.value # raise an error unless Net::HTTPSuccess
         result = response.body.split(/\n/)
       end
     rescue Net::HTTPServerException => e
-      raise "Connection failed: " + e.to_s
+      raise 'Connection to #{@url} failed: ' + e.to_s
     end
+    result
+  end
+
+  def query(mod, options = {})
+    # JSON output is a GSI specific addition atm.
+    #  therefore we don't default to it here
+    # options[:format] ||= 'json'
+
+    # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
+    uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}")
+
+    result = request(URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}"))
 
     # first line is a pseudo return code (wurgs)
     rc = result.shift.to_i
@@ -75,8 +83,10 @@ class ONA
   end
 
   # helper methof to convert numeric ip to dotted quad string notation:
-  def self.ip_mangle (i)
-    return [i].pack('N').unpack('C4').join('.')
+  def self.ip_mangle(i)
+    if i < 0 || i > 2**32-1
+      raise RangeError.new("#{i} out of IPv4 address range")
+    end
+    [i].pack('N').unpack('C4').join('.')
   end
-
 end
