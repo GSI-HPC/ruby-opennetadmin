@@ -11,7 +11,7 @@ require 'optparse'
 
 #### Commandline processing
 
-options = { debug: 0, params: {}, url: 'http://localhost/ona/dcm.php' }
+options = { debug: 0, params: {}, url: 'http://localhost/opennetadmin/dcm.php' }
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: ona.rb <action> <options>'
@@ -44,9 +44,9 @@ end.parse!
 
 # turn key1=value1 key2=value2 ... cmdline args into a Ruby hash:
 unless ARGV.empty?
-  options[:params] = ARGV.each_with_object({}) do |h, e|
-    # there must be an easier way ...
-    a = e.split('=')
+  options[:params] = ARGV.each_with_object({}) do |arg, h|
+    # there must be an easier way???
+    a = arg.split('=')
     h[a[0]] = a[1..-1].join('=')
     h
   end
