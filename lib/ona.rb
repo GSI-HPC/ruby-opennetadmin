@@ -9,7 +9,9 @@ require 'net/https'
 class ONA
   def initialize(url = nil, username = nil, password = nil, options = {})
     # read defaults from config file if available
-    parse_dcm_conf unless options[:dcm_conf] == :ignore
+    if File.readable?('/etc/dcm.conf') && (options[:dcm_conf] != :ignore)
+      parse_dcm_conf('/etc/dcm.conf')
+    end
     @url      ||= url
     @username ||= username
     @password ||= password
@@ -21,11 +23,7 @@ class ONA
   # this is almost a standard ini file - but not quite
   #
   def parse_dcm_conf(filename = '/etc/dcm.conf')
-    # begin
     content = File.read(filename)
-    # rescue
-    # return
-    # end
 
     # remove comments and empty lines:
     content.gsub!(/^\s*(#.*)?$/, '').squeeze!("\n")
