@@ -1,4 +1,10 @@
-ruby-opennetadmin (0.0.4-1) UNRELEASED; urgency=low
+ruby-opennetadmin (0.1.0-1) UNRELEASED; urgency=medium
+
+  * Package new version
+
+ -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Wed, 22 Nov 2017 10:52:30 +0100
+
+ruby-opennetadmin (0.0.4-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)
 
