@@ -5,13 +5,43 @@
 require 'json'
 require 'net/https'
 
+# class to send queries to a ONA server's dcm.php
 class ONA
-  def initialize(url = 'http://localhost/ona/dcm.php',
-                 username = nil, password = nil, options = {})
-    @url = url
-    @username = username
-    @password = password
+  def initialize(url = nil, username = nil, password = nil, options = {})
+    # read defaults from config file if available
+    parse_dcm_conf unless options[:dcm_conf] == :ignore
+    @url      ||= url
+    @username ||= username
+    @password ||= password
     @options = { verify_ssl: true }.merge(options)
+  end
+
+  # read dcm.conf
+  #
+  # this is almost a standard ini file - but not quite
+  #
+  def parse_dcm_conf(filename = '/etc/dcm.conf')
+    # begin
+    content = File.read(filename)
+    # rescue
+    # return
+    # end
+
+    # remove comments and empty lines:
+    content.gsub!(/^\s*(#.*)?$/, '').squeeze!("\n")
+
+    # split into sections
+    sections = content.scan(/\[(\w+)\]([^\[]*)/m)
+
+    options = sections.each_with_object({}) do |e, h|
+      h[e[0]] = e[1].scan(/\s*(\S+)\s*=>\s*(\S+)\s*\n/).to_h
+    end
+
+    @url      ||= options['networking']['url']
+    @username ||= options['networking']['login']
+    @password ||= options['networking']['passwd']
+
+    # TODO: also consider logging options, allow-http-fallback etc.
   end
 
   # construct the options part of the query string from the given
@@ -40,7 +70,8 @@ class ONA
         uri.host, uri.port,
         use_ssl: (uri.scheme == 'https'),
         # FIXME: Don't turn off SSL verification unconditionally
-        verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
+        verify_mode: OpenSSL::SSL::VERIFY_NONE
+      ) do |http|
 
         request = Net::HTTP::Get.new(uri.request_uri)
         request.basic_auth(@username, @password) if @username && @password
@@ -63,7 +94,8 @@ class ONA
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
     uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}")
 
-    result = request(URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}"))
+    result = request(URI.parse("#{@url}?module=#{mod}"\
+                               "&options=#{option_string(options)}"))
 
     # first line is a pseudo return code (wurgs)
     rc = result.shift.to_i
@@ -84,9 +116,7 @@ class ONA
 
   # helper methof to convert numeric ip to dotted quad string notation:
   def self.ip_mangle(i)
-    if i < 0 || i > 2**32-1
-      raise RangeError.new("#{i} out of IPv4 address range")
-    end
+    raise RangeError, "#{i} out of IPv4 address range" if i < 0 || i > 2**32 - 1
     [i].pack('N').unpack('C4').join('.')
   end
 end
