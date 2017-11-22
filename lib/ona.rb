@@ -79,7 +79,7 @@ class ONA
         result = response.body.split(/\n/)
       end
     rescue Net::HTTPServerException => e
-      raise 'Connection to #{@url} failed: ' + e.to_s
+      raise "Connection to #{@url} failed: " + e.to_s
     end
     result
   end
