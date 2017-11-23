@@ -71,6 +71,7 @@ ona = ONA.new(options[:url], options[:username], options[:password])
 
 begin
   puts ona.query(options[:module], options[:params])
-rescue StandardError => e
+rescue OpennetadminError => e
   STDERR.puts "Command failed: #{e}"
+  exit(e.errorcode)
 end

@@ -5,6 +5,15 @@
 require 'json'
 require 'net/https'
 
+# custom error class for ONA errors
+class OpennetadminError < StandardError
+  attr_reader :errorcode
+  def initialize(message, code)
+    super(message)
+    @errorcode = code
+  end
+end
+
 # class to send queries to a ONA server's dcm.php
 class ONA
   def initialize(url = nil, username = nil, password = nil, options = {})
@@ -79,7 +88,7 @@ class ONA
         result = response.body.split(/\n/)
       end
     rescue Net::HTTPServerException => e
-      raise "Connection to #{@url} failed: " + e.to_s
+      raise OpennetadminError.new("Connection to #{@url} failed: " + e.to_s, 128)
     end
     result
   end
@@ -92,15 +101,14 @@ class ONA
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
     uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}")
 
-    result = request(URI.parse("#{@url}?module=#{mod}"\
-                               "&options=#{option_string(options)}"))
+    result = request(URI.parse(uri))
 
     # first line is a pseudo return code (wurgs)
     rc = result.shift.to_i
     if rc != 0
       # TODO: this isn't really an error condition all the time
       #  eg. for *_display methods it seems to be the dataset count
-      raise "ONA error code #{rc} for #{uri}:\n#{result.join("\n")}"
+      raise OpennetadminError.new(result.join("\n"), rc)
     end
 
     # TODO: better catch "Authorization Required"
