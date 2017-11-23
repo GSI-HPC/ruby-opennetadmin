@@ -101,7 +101,7 @@ class ONA
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
     uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}")
 
-    result = request(URI.parse(uri))
+    result = request(uri)
 
     # first line is a pseudo return code (wurgs)
     rc = result.shift.to_i
