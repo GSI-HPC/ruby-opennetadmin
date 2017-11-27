@@ -85,14 +85,17 @@ class ONA
         response = http.request(request)
         # TODO: follow redirects (Net::HTTPRedirection)
         # raise an error unless Net::HTTPSuccess
-        unless response.kind_of? Net::HTTPSuccess
-          raise OpennetadminError.new("@url responded with error #{response.code}: #{response.message}", 129)
+        unless response.is_a? Net::HTTPSuccess
+          raise OpennetadminError.new("#{@url} responded with error " +
+                                      response.code + ': ' +
+                                      response.message, 129)
         end
 
         result = response.body.split(/\n/)
       end
     rescue Net::HTTPServerException => e
-      raise OpennetadminError.new("Connection to #{@url} failed: " + e.to_s, 128)
+      raise OpennetadminError.new("Connection to #{@url} failed: " +
+                                  e.to_s, 128)
     end
     result
   end
@@ -101,6 +104,16 @@ class ONA
     # JSON output is a GSI specific addition atm.
     #  therefore we don't default to it here
     # options[:format] ||= 'json'
+
+    # the ona_sql module has 3 variants of the sql option
+    #  1) a local file
+    #  2) plain sql
+    #  3) a sql file on the server
+    #
+    # So we check if a file exists and slurp it:
+    if mod == ona_sql && options['sql'] && File.readable?(options['sql'])
+      options['sql'] = File.read(options['sql'])
+    end
 
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
     uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}")
