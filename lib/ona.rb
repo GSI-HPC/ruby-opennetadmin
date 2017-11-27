@@ -111,7 +111,7 @@ class ONA
     #  3) a sql file on the server
     #
     # So we check if a file exists and slurp it:
-    if mod == ona_sql && options['sql'] && File.readable?(options['sql'])
+    if mod == 'ona_sql' && options['sql'] && File.readable?(options['sql'])
       options['sql'] = File.read(options['sql'])
     end
 
