@@ -1,3 +1,9 @@
+ruby-opennetadmin (0.3.0-1) stretch; urgency=medium
+
+  * Some more fixes and enhancements
+
+ -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Mon, 27 Nov 2017 13:28:25 +0100
+
 ruby-opennetadmin (0.2.0-1) stretch; urgency=medium
 
   * Package new version
