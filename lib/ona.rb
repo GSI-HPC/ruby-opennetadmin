@@ -84,7 +84,11 @@ class ONA
         request.basic_auth(@username, @password) if @username && @password
         response = http.request(request)
         # TODO: follow redirects (Net::HTTPRedirection)
-        response.value # raise an error unless Net::HTTPSuccess
+        # raise an error unless Net::HTTPSuccess
+        unless response.kind_of? Net::HTTPSuccess
+          raise OpennetadminError.new("@url responded with error #{response.code}: #{response.message}", 129)
+        end
+
         result = response.body.split(/\n/)
       end
     rescue Net::HTTPServerException => e
