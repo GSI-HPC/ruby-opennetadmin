@@ -102,7 +102,7 @@ class ONA
 
   def query(mod, options = {})
     # Default to JSON output
-    options[:format] ||= 'json'
+    options['format'] ||= 'json'
 
     # the ona_sql module has 3 variants of the sql option
     #  1) a local file
@@ -120,7 +120,7 @@ class ONA
     # TODO: better catch "Authorization Required"
     result = request(uri)
 
-    if result.first =~ /^\d+$/
+    if result.first =~ /^\d+\s+$/
       # first line is a pseudo return code (wurgs)
       rc = result.shift.to_i
       if rc != 0
@@ -130,11 +130,11 @@ class ONA
       end
     end
 
-    if options[:format] == 'json'
+    if options['format'] == 'json'
       begin
         return JSON.parse(result.join("\n"))
       rescue JSON::ParserError => e
-        raise OpennetadminError.new(e + result.join("\n"), rc)
+        raise OpennetadminError.new(e.to_s + result.join("\n"), rc)
       end
     else
       # return plain text:

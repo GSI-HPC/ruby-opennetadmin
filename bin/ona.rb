@@ -63,11 +63,11 @@ end
 
 if options[:module]
 # default to text output unless explictly stated otherwise:
-  options[:params][:format] ||= 'text'
+  options[:params]['format'] ||= 'text'
 else
   # fallback to --list of no module was given
   options[:module] = 'get_module_list'
-  options[:params][:type] ||= 'string'
+  options[:params]['type'] ||= 'string'
 end
 
 ona = ONA.new(options[:url], options[:username], options[:password])
