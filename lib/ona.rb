@@ -101,9 +101,8 @@ class ONA
   end
 
   def query(mod, options = {})
-    # JSON output is a GSI specific addition atm.
-    #  therefore we don't default to it here
-    # options[:format] ||= 'json'
+    # Default to JSON output
+    options[:format] ||= 'json'
 
     # the ona_sql module has 3 variants of the sql option
     #  1) a local file
@@ -118,21 +117,27 @@ class ONA
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
     uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}")
 
+    # TODO: better catch "Authorization Required"
     result = request(uri)
 
-    # first line is a pseudo return code (wurgs)
-    rc = result.shift.to_i
-    if rc != 0
-      # TODO: this isn't really an error condition all the time
-      #  eg. for *_display methods it seems to be the dataset count
-      raise OpennetadminError.new(result.join("\n"), rc)
+    if result.first =~ /^\d+$/
+      # first line is a pseudo return code (wurgs)
+      rc = result.shift.to_i
+      if rc != 0
+        # TODO: this isn't really an error condition all the time
+        #  eg. for *_display methods it seems to be the dataset count
+        raise OpennetadminError.new(result.join("\n"), rc)
+      end
     end
 
-    # TODO: better catch "Authorization Required"
-    begin
-      return JSON.parse(result.join("\n"))
-    rescue JSON::ParserError
-      # OK, so we return plain text:
+    if options[:format] == 'json'
+      begin
+        return JSON.parse(result.join("\n"))
+      rescue JSON::ParserError => e
+        raise OpennetadminError.new(e + result.join("\n"), rc)
+      end
+    else
+      # return plain text:
       return result.join("\n")
     end
   end
