@@ -52,7 +52,7 @@ unless ARGV.empty?
   end
 end
 
-puts options.inspect if options[:debug] > 0
+STDERR.puts options.inspect if options[:debug] > 0
 
 # Time to ask for a password unless given on the cmdline:
 if options[:username] && !(options[:password])
@@ -61,15 +61,19 @@ if options[:username] && !(options[:password])
   STDERR.puts
 end
 
-# fallback to --list of no module was given
-unless options[:module]
+if options[:module]
+# default to text output unless explictly stated otherwise:
+  options[:params][:format] ||= 'text'
+else
+  # fallback to --list of no module was given
   options[:module] = 'get_module_list'
-  options[:params][:type] = 'string'
+  options[:params][:type] ||= 'string'
 end
 
 ona = ONA.new(options[:url], options[:username], options[:password])
 
 begin
+  STDERR.puts options[:module] + ' ' + options[:params].pretty_inspect if options[:debug] > 0
   puts ona.query(options[:module], options[:params])
 rescue OpennetadminError => e
   STDERR.puts "Command failed: #{e}"
