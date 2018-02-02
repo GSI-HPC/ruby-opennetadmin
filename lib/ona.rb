@@ -57,14 +57,16 @@ class ONA
     # options is key1=value1&key2=value2&... '&' must be URL encoded
     # we do some tricks with inject
     options.inject([]) do |a, (k, v)|
-      if v
+      if v.class == FalseClass
+        a << "#{k}=N"
+      elsif v.class == TrueClass || v.class == NilClass || v == ''
+        # if options have no value we fallback to 'Y':
+        a << "#{k}=Y"
+      else
         # FIXME: If v is a filename, dcm.pl reads and passes its content
         #        I doubt this is really smart behaviour
         v2 = v.to_s.gsub('=', '\=') # escape equal signs eg. in SQL queries
         a << "#{k}=#{URI.encode(v2, /[^[:alnum:]]/)}"
-      else
-        # if options have no value we fallback to 'Y':
-        a << "#{k}=Y"
       end
     end.join('%26')
   end
@@ -101,6 +103,10 @@ class ONA
   end
 
   def query(mod, options = {})
+    # turn all keys into strings to avoid
+    #    ie. {:format => 'bla', 'format' => 'blubb'}
+    options = options.collect{|k,v| [k.to_s, v]}.to_h
+
     # Default to JSON output
     options['format'] ||= 'json'
 
@@ -123,9 +129,9 @@ class ONA
     if result.first =~ /^\d+\s+$/
       # first line is a pseudo return code (wurgs)
       rc = result.shift.to_i
-      if rc != 0
-        # TODO: this isn't really an error condition all the time
-        #  eg. for *_display methods it seems to be the dataset count
+      # For ona_sql this isn't really an error condition
+      #  but the dataset count:
+      if rc != 0 and mod != 'ona_sql'
         raise OpennetadminError.new(result.join("\n"), rc)
       end
     end
