@@ -1,4 +1,4 @@
-ruby-opennetadmin (0.3.2-1) stretch; urgency=medium
+ruby-opennetadmin (0.3.3-1) stretch; urgency=medium
 
   * Package latest changes to the module
 
