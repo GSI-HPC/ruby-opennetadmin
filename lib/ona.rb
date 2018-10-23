@@ -72,8 +72,14 @@ class ONA
   end
 
   # send request to ONA server
-  def request(uri)
+  def request(uri, limit = 10)
     result = ''
+
+    # limit the recursion depth for HTTP redirects:
+    if limit < 1
+      raise OpennetadminError.new("ONA server redirected too many times")
+    end
+
     begin
       Net::HTTP.start(
         uri.host, uri.port,
@@ -86,14 +92,17 @@ class ONA
         request.basic_auth(@username, @password) if @username && @password
         response = http.request(request)
         # TODO: follow redirects (Net::HTTPRedirection)
-        # raise an error unless Net::HTTPSuccess
-        unless response.is_a? Net::HTTPSuccess
+        case response
+        when Net::HTTPSuccess
+          result = response.body.split(/\n/)
+        when Net::HTTPRedirection
+          request(response['location'], limit - 1)
+        else
+          # raise an error
           raise OpennetadminError.new("#{@url} responded with error " +
                                       response.code + ': ' +
                                       response.message, 129)
         end
-
-        result = response.body.split(/\n/)
       end
     rescue Net::HTTPServerException => e
       raise OpennetadminError.new("Connection to #{@url} failed: " +
