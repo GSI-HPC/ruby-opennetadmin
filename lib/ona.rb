@@ -94,9 +94,9 @@ class ONA
         # TODO: follow redirects (Net::HTTPRedirection)
         case response
         when Net::HTTPSuccess
-          return response.body.split(/\n/)
+          result = response.body.split(/\n/)
         when Net::HTTPRedirection
-          return request(URI.parse(response['location']), limit - 1)
+          request(response['location'], limit - 1)
         else
           # raise an error
           raise OpennetadminError.new("#{@url} responded with error " +
