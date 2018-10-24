@@ -1,3 +1,9 @@
+ruby-opennetadmin (0.4.0-1) UNRELEASED; urgency=medium
+
+  * New version
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 23 Oct 2018 15:16:55 +0200
+
 ruby-opennetadmin (0.3.3-1) stretch; urgency=medium
 
   * Package latest changes to the module
