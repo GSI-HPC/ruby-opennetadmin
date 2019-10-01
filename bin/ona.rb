@@ -54,6 +54,9 @@ end
 
 STDERR.puts options.inspect if options[:debug] > 0
 
+# try to read the password from an environment variable:
+options[:password] ||= ENV['ONA_PASSWORD']
+
 # Time to ask for a password unless given on the cmdline:
 if options[:username] && !(options[:password])
   STDERR.print "Password for #{options[:username]}: "
