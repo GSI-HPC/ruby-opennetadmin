@@ -1,8 +1,17 @@
-ruby-opennetadmin (0.4.1-1) UNRELEASED; urgency=medium
+ruby-opennetadmin (0.4.1-2) stretch; urgency=medium
+
+  * Update debian/control
+  * Add possibility to read ONA password from env var
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 01 Oct 2019 18:36:41 +0200
+
+ruby-opennetadmin (0.4.1-1) stretch; urgency=medium
 
   * Catch connect errors and default to return code -1
+  * Update debian/control
+  * Add possibility to read ONA password from env var
 
- -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 01 Oct 2019 15:54:35 +0200
+ -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 01 Oct 2019 18:36:22 +0200
 
 ruby-opennetadmin (0.4.0-1) stretch; urgency=medium
 
