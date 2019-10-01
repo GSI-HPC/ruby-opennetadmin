@@ -8,7 +8,7 @@ require 'net/https'
 # custom error class for ONA errors
 class OpennetadminError < StandardError
   attr_reader :errorcode
-  def initialize(message, code)
+  def initialize(message, code = -1)
     super(message)
     @errorcode = code
   end
@@ -104,7 +104,7 @@ class ONA
                                       response.message, 129)
         end
       end
-    rescue Net::HTTPServerException => e
+    rescue Net::HTTPServerException, Errno::EADDRNOTAVAIL => e
       raise OpennetadminError.new("Connection to #{@url} failed: " +
                                   e.to_s, 128)
     end
