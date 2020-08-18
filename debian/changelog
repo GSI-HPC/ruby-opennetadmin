@@ -1,3 +1,9 @@
+ruby-opennetadmin (0.4.2-1) stretch; urgency=medium
+
+  * If format=json is specified on the cmdline the result should be json, not ruby data
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 18 Aug 2020 18:13:57 +0200
+
 ruby-opennetadmin (0.4.1-2) stretch; urgency=medium
 
   * Update debian/control
