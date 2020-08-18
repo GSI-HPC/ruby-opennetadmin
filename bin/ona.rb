@@ -78,7 +78,14 @@ ona = ONA.new(options[:url], options[:username], options[:password])
 
 begin
   STDERR.puts options[:module] + ' ' + options[:params].pretty_inspect if options[:debug] > 0
-  puts ona.query(options[:module], options[:params])
+
+  # ona.query converts JSON to Ruby - let's convert it back
+  #  "Das geht bestimmt auch eleganter"
+  if options[:params]['format'] == 'json'
+    puts ona.query(options[:module], options[:params]).to_json
+  else
+    puts ona.query(options[:module], options[:params])
+  end
 rescue OpennetadminError => e
   STDERR.puts "Command failed: #{e}"
   exit(e.errorcode)
