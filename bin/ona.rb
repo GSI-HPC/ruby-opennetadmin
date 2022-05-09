@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 #
+# Copyright 2015-2022 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH
+#
+# Authors:
+#  Christopher Huhn   <C.Huhn@gsi.de>
+#
 # This is a Ruby replacement for dcm.pl
 #
 # TODO: Read config items from a config file
@@ -11,7 +16,8 @@ require 'optparse'
 
 #### Commandline processing
 
-options = { debug: 0, params: {}, url: 'http://localhost/opennetadmin/dcm.php' }
+options = { debug: 0, params: {}, timeout: 60, # standard timeout of Net::HTTP
+            url: 'http://localhost/opennetadmin/dcm.php' }
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: ona.rb <action> <options>'
@@ -39,6 +45,10 @@ OptionParser.new do |opts|
 
   opts.on('-t', '--test', 'Debug dry-run mode') do
     options[:debug] += 1
+  end
+
+  opts.on('-T', '--timeout', 'Specify timout for ONA queries') do |v|
+    options[:timeout] = v
   end
 end.parse!
 
@@ -74,10 +84,13 @@ else
   options[:params]['type']   ||= 'string'
 end
 
-ona = ONA.new(options[:url], options[:username], options[:password])
+ona = ONA.new(options[:url], options[:username], options[:password],
+              options)
 
 begin
-  STDERR.puts options[:module] + ' ' + options[:params].pretty_inspect if options[:debug] > 0
+  if options[:debug] > 0
+    STDERR.puts options[:module] + ' ' + options[:params].pretty_inspect
+  end
 
   # ona.query converts JSON to Ruby - let's convert it back
   #  "Das geht bestimmt auch eleganter"
