@@ -1,3 +1,11 @@
+ruby-opennetadmin (0.5.0-1) buster; urgency=medium
+
+  * gem version bump
+  * Add the proper infos and GPL v3
+  * Fix control info
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Mon, 09 May 2022 12:32:02 +0200
+
 ruby-opennetadmin (0.4.2-1) stretch; urgency=medium
 
   * If format=json is specified on the cmdline the result should be json, not ruby data
