@@ -1,4 +1,9 @@
 #
+# Copyright 2015-2022 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH
+#
+# Authors:
+#  Christopher Huhn   <C.Huhn@gsi.de>
+#
 # class for ONA queries, replacement for dcm.pl
 #
 
@@ -49,6 +54,8 @@ class ONA
     @password ||= options['networking']['passwd']
 
     # TODO: also consider logging options, allow-http-fallback etc.
+
+    options # return options hash
   end
 
   # construct the options part of the query string from the given
@@ -104,7 +111,8 @@ class ONA
                                       response.message, 129)
         end
       end
-    rescue Net::HTTPServerException, Errno::EADDRNOTAVAIL => e
+    rescue Errno::EADDRNOTAVAIL, Net::HTTPServerException,
+           Net::ReadTimeout, Timeout::Error => e
       raise OpennetadminError.new("Connection to #{@url} failed: " +
                                   e.to_s, 128)
     end
@@ -114,10 +122,10 @@ class ONA
   def query(mod, options = {})
     # turn all keys into strings to avoid
     #    ie. {:format => 'bla', 'format' => 'blubb'}
-    options = options.collect{|k,v| [k.to_s, v]}.to_h
+    options = options.collect { |k, v| [k.to_s, v] }.to_h
 
-    # Default to JSON output
-    options['format'] ||= 'json'
+    # Default to JSON output unless the ona_sql module is called
+    options['format'] ||= mod == 'ona_sql' ? 'text' : 'json'
 
     # the ona_sql module has 3 variants of the sql option
     #  1) a local file
@@ -140,7 +148,7 @@ class ONA
       rc = result.shift.to_i
       # For ona_sql this isn't really an error condition
       #  but the dataset count:
-      if rc != 0 and mod != 'ona_sql'
+      if rc != 0 && mod != 'ona_sql'
         raise OpennetadminError.new(result.join("\n"), rc)
       end
     end
