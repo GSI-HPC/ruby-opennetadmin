@@ -1,3 +1,9 @@
+ruby-opennetadmin (0.5.0-1+deb11u1) bullseye; urgency=medium
+
+  * Rebuild for Bullseye
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 13 Feb 2024 15:08:57 +0100
+
 ruby-opennetadmin (0.5.0-1) buster; urgency=medium
 
   * gem version bump
