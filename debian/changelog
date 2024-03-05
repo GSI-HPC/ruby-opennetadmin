@@ -1,3 +1,10 @@
+ruby-opennetadmin (0.5.1-1) bullseye; urgency=medium
+
+  * Replace the deprecated URI.encode with GSI.escape and straighten the logic
+  * Bump compat and standards version
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 05 Mar 2024 11:17:44 +0100
+
 ruby-opennetadmin (0.5.0-1+deb11u1) bullseye; urgency=medium
 
   * Rebuild for Bullseye
@@ -49,22 +56,22 @@ ruby-opennetadmin (0.3.0-1) stretch; urgency=medium
 
   * Some more fixes and enhancements
 
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Mon, 27 Nov 2017 13:28:25 +0100
+ -- Christopher Huhn <C.Huhn@gsi.de>  Mon, 27 Nov 2017 13:28:25 +0100
 
 ruby-opennetadmin (0.2.0-1) stretch; urgency=medium
 
   * Package new version
 
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Thu, 23 Nov 2017 15:56:03 +0100
+ -- Christopher Huhn <C.Huhn@gsi.de>  Thu, 23 Nov 2017 15:56:03 +0100
 
 ruby-opennetadmin (0.1.0-1) UNRELEASED; urgency=medium
 
   * Package new version
 
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Thu, 23 Nov 2017 15:56:03 +0100
+ -- Christopher Huhn <C.Huhn@gsi.de>  Thu, 23 Nov 2017 15:56:03 +0100
 
 ruby-opennetadmin (0.0.4-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)
+  * Initial release
 
- -- Christopher Huhn, GSI <C.Huhn@gsi.de>  Mon, 09 Mar 2015 15:52:32 +0100
+ -- Christopher Huhn <C.Huhn@gsi.de>  Mon, 09 Mar 2015 15:52:32 +0100
