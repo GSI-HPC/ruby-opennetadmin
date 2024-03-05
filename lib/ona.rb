@@ -41,7 +41,8 @@ class ONA
     content = File.read(filename)
 
     # remove comments and empty lines:
-    content.gsub!(/^\s*(#.*)?$/, '').squeeze!("\n")
+    content.gsub!(/^\s*(#.*)?$/, '')
+    content.squeeze!("\n")
 
     # split into sections
     sections = content.scan(/\[(\w+)\]([^\[]*)/m)
