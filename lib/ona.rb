@@ -1,5 +1,5 @@
 #
-# Copyright 2015-2022 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH
+# Copyright 2015-2024 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH
 #
 # Authors:
 #  Christopher Huhn   <C.Huhn@gsi.de>
@@ -7,6 +7,7 @@
 # class for ONA queries, replacement for dcm.pl
 #
 
+require 'cgi'
 require 'json'
 require 'net/https'
 
@@ -64,17 +65,17 @@ class ONA
     # options is key1=value1&key2=value2&... '&' must be URL encoded
     # we do some tricks with inject
     options.inject([]) do |a, (k, v)|
-      if v.class == FalseClass
-        a << "#{k}=N"
-      elsif v.class == TrueClass || v.class == NilClass || v == ''
-        # if options have no value we fallback to 'Y':
-        a << "#{k}=Y"
-      else
-        # FIXME: If v is a filename, dcm.pl reads and passes its content
-        #        I doubt this is really smart behaviour
-        v2 = v.to_s.gsub('=', '\=') # escape equal signs eg. in SQL queries
-        a << "#{k}=#{URI.encode(v2, /[^[:alnum:]]/)}"
-      end
+      a << case v.class
+           when FalseClass
+             "#{k}=N"
+           when TrueClass, NilClass, ''
+             # if options have no value we fallback to 'Y':
+             "#{k}=Y"
+           else
+             # FIXME: If v is a filename, dcm.pl reads and passes its content
+             #        I doubt this is really smart behaviour
+             "#{k}=#{CGI.escape(v)}"
+           end
     end.join('%26')
   end
 
