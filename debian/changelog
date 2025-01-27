@@ -1,3 +1,9 @@
+ruby-opennetadmin (0.5.2-1) bullseye; urgency=medium
+
+  * gsub! works in-place and returns nil which cannot be squeeze!'d
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Tue, 05 Mar 2024 14:23:24 +0100
+
 ruby-opennetadmin (0.5.1-1) bullseye; urgency=medium
 
   * Replace the deprecated URI.encode with GSI.escape and straighten the logic
