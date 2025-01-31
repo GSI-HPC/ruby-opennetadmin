@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'opennetadmin'
-  s.version     = '0.5.1'
-  s.date        = '2024-03-05'
+  s.version     = '0.5.3'
+  s.date        = '2025-01-31'
   s.summary     = 'Client interface to OpenNetAdmin as a replacement for dcm.pl'
   s.author      = 'Christopher Huhn'
   s.email       = 'c.huhn@gsi.de'

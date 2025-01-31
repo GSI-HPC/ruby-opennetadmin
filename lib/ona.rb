@@ -75,7 +75,7 @@ class ONA
            else
              # FIXME: If v is a filename, dcm.pl reads and passes its content
              #        I doubt this is really smart behaviour
-             "#{k}=#{CGI.escape(v)}"
+             "#{k}=#{CGI.escape(v.to_s)}"
            end
     end.join('%26')
   end
