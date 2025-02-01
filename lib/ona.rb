@@ -66,7 +66,7 @@ class ONA
     # options is key1=value1&key2=value2&... '&' must be URL encoded
     # we do some tricks with inject
     options.inject([]) do |a, (k, v)|
-      a << case v.class
+      a << case v
            when FalseClass
              "#{k}=N"
            when TrueClass, NilClass, ''
