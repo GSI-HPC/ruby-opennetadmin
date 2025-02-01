@@ -14,6 +14,7 @@ require 'net/https'
 # custom error class for ONA errors
 class OpennetadminError < StandardError
   attr_reader :errorcode
+
   def initialize(message, code = -1)
     super(message)
     @errorcode = code
@@ -24,9 +25,7 @@ end
 class ONA
   def initialize(url = nil, username = nil, password = nil, options = {})
     # read defaults from config file if available
-    if File.readable?('/etc/dcm.conf') && (options[:dcm_conf] != :ignore)
-      parse_dcm_conf('/etc/dcm.conf')
-    end
+    parse_dcm_conf('/etc/dcm.conf') if File.readable?('/etc/dcm.conf') && (options[:dcm_conf] != :ignore)
     @url      ||= url
     @username ||= username
     @password ||= password
@@ -85,9 +84,7 @@ class ONA
     result = ''
 
     # limit the recursion depth for HTTP redirects:
-    if limit < 1
-      raise OpennetadminError.new("ONA server redirected too many times")
-    end
+    raise OpennetadminError.new('ONA server redirected too many times') if limit < 1
 
     begin
       Net::HTTP.start(
@@ -96,14 +93,13 @@ class ONA
         # FIXME: Don't turn off SSL verification unconditionally
         verify_mode: OpenSSL::SSL::VERIFY_NONE
       ) do |http|
-
         request = Net::HTTP::Get.new(uri.request_uri)
         request.basic_auth(@username, @password) if @username && @password
         response = http.request(request)
         # TODO: follow redirects (Net::HTTPRedirection)
         case response
         when Net::HTTPSuccess
-          return response.body.split(/\n/)
+          return response.body.split("\n")
         when Net::HTTPRedirection
           return request(URI.parse(response['location']), limit - 1)
         else
@@ -113,7 +109,7 @@ class ONA
                                       response.message, 129)
         end
       end
-    rescue Errno::EADDRNOTAVAIL, Net::HTTPServerException,
+    rescue Errno::EADDRNOTAVAIL, Net::HTTPClientException,
            Net::ReadTimeout, Timeout::Error => e
       raise OpennetadminError.new("Connection to #{@url} failed: " +
                                   e.to_s, 128)
@@ -135,9 +131,7 @@ class ONA
     #  3) a sql file on the server
     #
     # So we check if a file exists and slurp it:
-    if mod == 'ona_sql' && options['sql'] && File.readable?(options['sql'])
-      options['sql'] = File.read(options['sql'])
-    end
+    options['sql'] = File.read(options['sql']) if mod == 'ona_sql' && options['sql'] && File.readable?(options['sql'])
 
     # Net::HTTP.get(URI(url)) does not support HTTPS out of the box - WTF?
     uri = URI.parse("#{@url}?module=#{mod}&options=#{option_string(options)}")
@@ -150,26 +144,24 @@ class ONA
       rc = result.shift.to_i
       # For ona_sql this isn't really an error condition
       #  but the dataset count:
-      if rc != 0 && mod != 'ona_sql'
-        raise OpennetadminError.new(result.join("\n"), rc)
-      end
+      raise OpennetadminError.new(result.join("\n"), rc) if rc != 0 && mod != 'ona_sql'
     end
 
-    if options['format'] == 'json'
-      begin
-        return JSON.parse(result.join("\n"))
-      rescue JSON::ParserError => e
-        raise OpennetadminError.new(e.to_s + result.join("\n"), rc)
-      end
-    else
-      # return plain text:
-      return result.join("\n")
+    return result.join("\n") unless options['format'] == 'json'
+
+    begin
+      JSON.parse(result.join("\n"))
+    rescue JSON::ParserError => e
+      raise OpennetadminError.new(e.to_s + result.join("\n"), rc)
     end
+
+    # return plain text:
   end
 
   # helper methof to convert numeric ip to dotted quad string notation:
   def self.ip_mangle(i)
-    raise RangeError, "#{i} out of IPv4 address range" if i < 0 || i > 2**32 - 1
+    raise RangeError, "#{i} out of IPv4 address range" if i < 0 || i > (2**32) - 1
+
     [i].pack('N').unpack('C4').join('.')
   end
 end

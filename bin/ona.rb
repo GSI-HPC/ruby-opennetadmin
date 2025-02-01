@@ -62,10 +62,10 @@ unless ARGV.empty?
   end
 end
 
-STDERR.puts options.inspect if options[:debug] > 0
+warn options.inspect if options[:debug] > 0
 
 # try to read the password from an environment variable:
-options[:password] ||= ENV['ONA_PASSWORD']
+options[:password] ||= ENV.fetch('ONA_PASSWORD', nil)
 
 # Time to ask for a password unless given on the cmdline:
 if options[:username] && !(options[:password])
@@ -75,7 +75,7 @@ if options[:username] && !(options[:password])
 end
 
 if options[:module]
-# default to text output unless explictly stated otherwise:
+  # default to text output unless explictly stated otherwise:
   options[:params]['format'] ||= 'text'
 else
   # fallback to --list of no module was given
@@ -88,9 +88,7 @@ ona = ONA.new(options[:url], options[:username], options[:password],
               options)
 
 begin
-  if options[:debug] > 0
-    STDERR.puts options[:module] + ' ' + options[:params].pretty_inspect
-  end
+  warn options[:module] + ' ' + options[:params].pretty_inspect if options[:debug] > 0
 
   # ona.query converts JSON to Ruby - let's convert it back
   #  "Das geht bestimmt auch eleganter"
@@ -100,6 +98,6 @@ begin
     puts ona.query(options[:module], options[:params])
   end
 rescue OpennetadminError => e
-  STDERR.puts "Command failed: #{e}"
+  warn "Command failed: #{e}"
   exit(e.errorcode)
 end
