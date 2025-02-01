@@ -109,8 +109,7 @@ class ONA
           raise OpennetadminError.new("#{@url} responded with error #{response.code}: #{response.message}", 129)
         end
       end
-    rescue Errno::EADDRNOTAVAIL, Net::HTTPClientException,
-           Net::ReadTimeout, Timeout::Error => e
+    rescue Errno::EADDRNOTAVAIL, Net::HTTPClientException, Timeout::Error => e
       raise OpennetadminError.new("Connection to #{@url} failed: " +
                                   e.to_s, 128)
     end
