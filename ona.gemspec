@@ -10,5 +10,6 @@ Gem::Specification.new do |s|
   s.executables = ['ona.rb']
   s.homepage    = 'https://git.gsi.de/debian-packages/ruby-opennetadmin'
   s.license     = 'LGPL-3.0'
+  s.required_ruby_version = '>= 2.7'
   s.metadata['rubygems_mfa_required'] = 'true'
 end
