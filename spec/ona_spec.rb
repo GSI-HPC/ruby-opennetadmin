@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ona'
 
 RSpec.describe ONA do

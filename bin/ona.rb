@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 #
 # Copyright 2015-2022 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH
 #
@@ -57,21 +59,21 @@ unless ARGV.empty?
   options[:params] = ARGV.each_with_object({}) do |arg, h|
     # there must be an easier way???
     a = arg.split('=')
-    h[a[0]] = a[1..-1].join('=')
+    h[a[0]] = a[1..].join('=')
     h
   end
 end
 
-warn options.inspect if options[:debug] > 0
+warn options.inspect if (options[:debug]).positive?
 
 # try to read the password from an environment variable:
 options[:password] ||= ENV.fetch('ONA_PASSWORD', nil)
 
 # Time to ask for a password unless given on the cmdline:
 if options[:username] && !(options[:password])
-  STDERR.print "Password for #{options[:username]}: "
-  options[:password] = STDIN.noecho(&:gets).chomp
-  STDERR.puts
+  $stderr.print "Password for #{options[:username]}: "
+  options[:password] = $stdin.noecho(&:gets).chomp
+  $stderr.puts
 end
 
 if options[:module]
@@ -88,7 +90,7 @@ ona = ONA.new(options[:url], options[:username], options[:password],
               options)
 
 begin
-  warn options[:module] + ' ' + options[:params].pretty_inspect if options[:debug] > 0
+  warn "#{options[:module]} #{options[:params].pretty_inspect}" if (options[:debug]).positive?
 
   # ona.query converts JSON to Ruby - let's convert it back
   #  "Das geht bestimmt auch eleganter"

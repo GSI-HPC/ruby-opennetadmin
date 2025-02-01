@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Copyright 2015-2024 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH
 #
@@ -84,7 +86,7 @@ class ONA
     result = ''
 
     # limit the recursion depth for HTTP redirects:
-    raise OpennetadminError.new('ONA server redirected too many times') if limit < 1
+    raise OpennetadminError, 'ONA server redirected too many times' if limit < 1
 
     begin
       Net::HTTP.start(
@@ -104,9 +106,7 @@ class ONA
           return request(URI.parse(response['location']), limit - 1)
         else
           # raise an error
-          raise OpennetadminError.new("#{@url} responded with error " +
-                                      response.code + ': ' +
-                                      response.message, 129)
+          raise OpennetadminError.new("#{@url} responded with error #{response.code}: #{response.message}", 129)
         end
       end
     rescue Errno::EADDRNOTAVAIL, Net::HTTPClientException,
@@ -120,7 +120,7 @@ class ONA
   def query(mod, options = {})
     # turn all keys into strings to avoid
     #    ie. {:format => 'bla', 'format' => 'blubb'}
-    options = options.collect { |k, v| [k.to_s, v] }.to_h
+    options = options.transform_keys(&:to_s)
 
     # Default to JSON output unless the ona_sql module is called
     options['format'] ||= mod == 'ona_sql' ? 'text' : 'json'
@@ -160,7 +160,7 @@ class ONA
 
   # helper methof to convert numeric ip to dotted quad string notation:
   def self.ip_mangle(i)
-    raise RangeError, "#{i} out of IPv4 address range" if i < 0 || i > (2**32) - 1
+    raise RangeError, "#{i} out of IPv4 address range" if i.negative? || i > (2**32) - 1
 
     [i].pack('N').unpack('C4').join('.')
   end
