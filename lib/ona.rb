@@ -159,8 +159,8 @@ class ONA
   end
 
   # helper methof to convert numeric ip to dotted quad string notation:
-  def self.ip_mangle(i)
-    raise RangeError, "#{i} out of IPv4 address range" if i.negative? || i > (2**32) - 1
+  def self.ip_mangle(ip)
+    raise RangeError, "#{ip} out of IPv4 address range" if ip.negative? || ip > (2**32) - 1
 
     [i].pack('N').unpack('C4').join('.')
   end
