@@ -1,7 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'opennetadmin'
   s.version     = '0.5.3'
-  s.date        = '2025-01-31'
   s.summary     = 'Client interface to OpenNetAdmin as a replacement for dcm.pl'
   s.author      = 'Christopher Huhn'
   s.email       = 'c.huhn@gsi.de'
@@ -15,4 +14,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop-rake'
   s.add_development_dependency 'rubocop-rspec'
   s.add_development_dependency 'simplecov'
+  s.metadata['rubygems_mfa_required'] = 'true'
 end
