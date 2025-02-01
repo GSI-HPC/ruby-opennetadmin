@@ -9,4 +9,7 @@ Gem::Specification.new do |s|
   s.executables = ['ona.rb']
   s.homepage    = 'https://git.gsi.de/debian-packages/ruby-opennetadmin'
   s.license     = 'LGPL-3.0'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'simplecov'
 end
