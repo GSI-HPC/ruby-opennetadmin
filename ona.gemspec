@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
     'bug_tracker_uri' => 'https://github.com/GSI-HPC/ruby-opennetadmin/issues',
     'source_code_uri' => 'https://github.com/GSI-HPC/ruby-opennetadmin',
     'rubygems_mfa_required' => 'true',
+    'github_repo' => 'ssh://github.com/GSI-HPC/ruby-opennetadmin'
   }
   s.required_ruby_version = '>= 2.7'
 end
