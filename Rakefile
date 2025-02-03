@@ -13,18 +13,22 @@ task default: %i[rubocop spec integration]
 
 desc 'Build the ONA development container with podman'
 task :build_onadev_container do
-  unless system('podman image exists localhost/ona-dev:latest')
-    system('podman login docker.io')
-    `git clone https://github.com/opennetadmin/ona onadev`
-    `podman build --build-arg UBUNTU_VERSION=24.04 -t ona-dev:latest onadev`
-    `rm -rf onadev`
+  require 'fileutils'
+  require 'tmpdir'
+  sh 'podman login docker.io'
+  dir = Dir.mktmpdir
+  begin
+    sh "git clone --depth 1 https://github.com/opennetadmin/ona #{dir}"
+    sh "podman build --build-arg UBUNTU_VERSION=24.04 -t ona-dev:latest #{dir}"
+  ensure
+    FileUtils.remove_entry dir
   end
 end
 
 desc 'Publish ONA development container to ghcr.io'
 task publish_onadev_container_to_ghcr: :build_onadev_container do
-  system('podman login ghcr.io')
-  `podman image push localhost/ona-dev:latest docker://ghcr.io/gsi-hpc/ona-dev:latest`
+  sh 'podman login ghcr.io'
+  sh 'podman image push localhost/ona-dev:latest docker://ghcr.io/gsi-hpc/ona-dev:latest'
 end
 
 RSpec::Core::RakeTask.new(:integration) do |task|
