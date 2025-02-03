@@ -40,5 +40,10 @@ jobs:
       with:
         ruby-version: '3.4'
         bundler-cache: true
+    - name: Cache Image
+      uses: jamesmortensen/cache-container-images-action@v1
+      with:
+        images: |
+          docker://ghcr.io/gsi-hpc/ona-dev:latest
     - name: Run Integration Tests
       run: bundle exec rake integration
