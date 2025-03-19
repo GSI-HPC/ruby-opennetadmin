@@ -1,0 +1,9 @@
+require:
+  - rubocop-rake
+  - rubocop-rspec
+AllCops:
+  NewCops: enable
+RSpec/ExampleLength:
+  Enabled: false
+Metrics:
+  Severity: info
