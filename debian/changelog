@@ -1,3 +1,10 @@
+ruby-opennetadmin (0.5.4-1) bookworm; urgency=medium
+
+  * New release
+  * Add the simplest test possible
+
+ -- Christopher Huhn <C.Huhn@gsi.de>  Wed, 19 Mar 2025 15:08:41 +0100
+
 ruby-opennetadmin (0.5.3-1) bookworm; urgency=medium
 
   * Prevent TypeError when option value is an integer

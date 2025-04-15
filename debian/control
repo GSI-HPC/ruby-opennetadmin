@@ -3,16 +3,14 @@ Section: ruby
 Priority: optional
 Maintainer: Christopher Huhn <C.Huhn@gsi.de>
 Build-Depends: debhelper (>= 10), gem2deb
-Standards-Version: 4.6.2
+Standards-Version: 4.7.2
 Vcs-Git: https://github.com:GSI-HPC/ruby-opennetadmin.git
 Vcs-Browser: https://github.com/GSI-HPC/ruby-opennetadmin
 Homepage: https://github.com/GSI-HPC/ruby-opennetadmin
 Testsuite: autopkgtest
-Ruby-Versions: all
 
 Package: ruby-opennetadmin
 Architecture: all
-Ruby-Versions: ${ruby:Versions}
 Depends: ${shlibs:Depends}, ${misc:Depends}, ruby
 Description: Client interface to OpenNetAdmin as a replacement for dcm.pl
  This package provides a script ona.rb that acts as a drop-in replacement
